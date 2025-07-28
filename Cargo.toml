@@ -1,0 +1,18 @@
+[package]
+name = "stderr"
+version = "0.1.0"
+edition = "2024"
+
+
+[lib]
+name = "stderr" 
+path = "src/lib.rs"
+
+[dependencies]
+log = "0.4"
+termcolor = "1.4"
+function_name = "0.3"
+is_terminal = "0.4"
+terminal_size = "0.3"
+strum = "0.26"
+strum_macros = "0.26"
