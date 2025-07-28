@@ -14,18 +14,21 @@ pub enum Glyph {
     #[strum(to_string = "\u{2318}")] Cmdr,
     #[strum(to_string = "\u{232C}")] Boto,
     #[strum(to_string = "\u{26ED}")] Gear,
-    #[strum(to_string = "\u{2139}")] Info,
+    #[strum(to_string = "\u{25CE}")] Info, //no emojis  ◎ ⦿, U+29BF
     #[strum(to_string = "\u{2026}")] Ellipsis,
 
     // --- Status ---
-    #[strum(to_string = "\u{2713}")] Check,
+    #[strum(to_string = "\u{2713}")] Pass,
     #[strum(to_string = "\u{2715}")] Fail,
-    #[strum(to_string = "\u{292C}")] XMark,
+    #[strum(to_string = "\u{292C}")] Mark,
+
+    #[strum(to_string = "\u{2026}")] Dots,
     #[strum(to_string = "\u{2690}")] FlagOff,
     #[strum(to_string = "\u{2691}")] FlagOn,
     #[strum(to_string = "\u{21AF}")] Bolt,
     #[strum(to_string = "\u{2693}")] Anchor,
     #[strum(to_string = "\u{26BF}")] Unlock,
+
 
     // --- Bullets & Pointers ---
     #[strum(to_string = "\u{2022}")] Bullet,
@@ -37,13 +40,13 @@ pub enum Glyph {
     #[strum(to_string = "\u{25B6}")] Pointer,
 
     // --- Arrows ---
-    #[strum(to_string = "\u{2191}")] ArrowUp,
-    #[strum(to_string = "\u{2193}")] ArrowDown,
-    #[strum(to_string = "\u{2192}")] ArrowRight,
-    #[strum(to_string = "\u{2190}")] ArrowLeft,
+    #[strum(to_string = "\u{2191}")] Up,
+    #[strum(to_string = "\u{2193}")] Down,
+    #[strum(to_string = "\u{2192}")] Right,
+    #[strum(to_string = "\u{2190}")] Left,
     #[strum(to_string = "\u{279C}")] HeavyArrowRight,
-    #[strum(to_string = "\u{21B3}")] ArrowDownRight,
-    #[strum(to_string = "\u{21B1}")] ArrowUpRight,
+    #[strum(to_string = "\u{21B3}")] DownArr,
+    #[strum(to_string = "\u{21B1}")] UpArr,
     #[strum(to_string = "\u{2B0E}")] ArrowSw,
     #[strum(to_string = "\u{2BA7}")] ArrowCurveSe,
     #[strum(to_string = "\u{21B6}")] CurveArrowLeft,
@@ -53,7 +56,7 @@ pub enum Glyph {
 
     // --- Actions ---
     #[strum(to_string = "\u{238C}")] Undo,
-    #[strum(to_string = "\u{27F2}")] RedoOpen,
+    #[strum(to_string = "\u{27F2}")] Recover, // 
     #[strum(to_string = "\u{27F3}")] RedoClosed,
 
     // --- Time & Date ---
@@ -67,10 +70,10 @@ pub enum Glyph {
     #[strum(to_string = "\u{265F}")] Pawn,
     #[strum(to_string = "\u{265A}")] King,
     #[strum(to_string = "\u{265B}")] Queen,
-    #[strum(to_string = "\u{25BD}")] Vtri,
-    #[strum(to_string = "\u{25B3}")] Utri,
+    #[strum(to_string = "\u{25BD}")] TriDown,
+    #[strum(to_string = "\u{25B3}")] TriUp,
     #[strum(to_string = "\u{2605}")] Star,
-    #[strum(to_string = "\u{264B}")] Snake,
+    #[strum(to_string = "\u{264B}")] Snek,
     #[strum(to_string = "\u{16DC}")] Diamond,
     #[strum(to_string = "\u{27E1}")] USpark,
     #[strum(to_string = "\u{2694}")] Sword,

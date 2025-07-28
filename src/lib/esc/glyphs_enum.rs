@@ -39,7 +39,7 @@ impl GlyphEnum {
 
                                                    // Be careful using it in terminal output.
     pub const DELTA: &'static str = "\u{25B3}";     // △ (from $'\xE2\x96\xB3', Same as UTRI)
-    pub const USPARK: &'static str = "\u{27E1}";    //  weißen Rautenfleck (White Concave-Sided Diamond)
+    pub const USPARK: &'static str = "\u{27E1}";    
 
     // --- Your Other Glyphs ---
     pub const SWORD: &'static str = "\u{2694}";    // ⚔

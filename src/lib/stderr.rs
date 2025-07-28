@@ -30,12 +30,14 @@
 //! }
 //! ```
 
-use std::io::{self, IsTerminal, Write, Error};
+use std::fmt::Display;
+use std::io::{self, IsTerminal, Write};
 use terminal_size::terminal_size;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 use crate::esc::boxes::{BorderStyle, BoxChars};
 use crate::utils::flag::flag_table as bitmap;
-
+use crate::esc::colors::{Color as ESC};
+use crate::esc::glyphs::{Glyph as ART};
 
 // --- Standalone Utility Functions (As you wanted) ---
 
@@ -183,60 +185,67 @@ impl Stderr {
       self.writer.set_color(spec)
     }
 
-    fn print_with_color(&mut self, color: Color, prefix: &str, msg: &str) -> Result<(), Error> {
-        if self.config.quiet { return Ok(()); }
-
-        self.set_fg(color)?; // Use the helper
-        write!(&mut self.writer, "{}", prefix)?;
-        self.writer.reset()?;
-        writeln!(&mut self.writer, "{}", msg)?;
-        Ok(())
+    fn print_with_color<P: Display>(&mut self, color: Color, prefix: P, msg: &str) -> io::Result<()> {        
+      if self.config.quiet { return Ok(()); }
+      self.set_fg(color)?; // Use the helper
+      write!(&mut self.writer, "{}", prefix)?;
+      self.writer.reset()?;
+      writeln!(&mut self.writer, "{}", msg)?;
+      Ok(())
     }
 
     // --- High-Level Logging API ---
 
 		/// Print an error message (always displayed).
 		pub fn error(&mut self, msg: &str) {
-				let _ = self.print_with_color(Color::Red, "✖ ", msg);
+				let _ = self.print_with_color(ESC::RED, ART::Mark, msg);
 		}
 
 		/// Print a warning message (suppressed only in quiet mode).
 		pub fn warn(&mut self, msg: &str) {
-				let _ = self.print_with_color(Color::Yellow, "⚠ ", msg);
+				let _ = self.print_with_color(ESC::ORANGE, ART::Delta, msg);
 		}
 
 		/// Print an informational message (suppressed only in quiet mode).
 		pub fn info(&mut self, msg: &str) {
-				let _ = self.print_with_color(Color::Blue, "ℹ ", msg);
+				let _ = self.print_with_color(ESC::BLUE, ART::Info, msg);
 		}
 
 		/// Print a success/okay message (suppressed only in quiet mode).
 		pub fn okay(&mut self, msg: &str) {
-				let _ = self.print_with_color(Color::Green, "✔ ", msg);
+				let _ = self.print_with_color(ESC::GREEN, ART::Pass, msg);
 		}
 
 		/// Print a note (suppressed only in quiet mode).
 		pub fn note(&mut self, msg: &str) {
-				let _ = self.print_with_color(Color::Magenta, "➜ ", msg);
+				let _ = self.print_with_color(ESC::BLUE, ART::Right, msg);
 		}
 
   		/// Print a debug message (only shown when debug mode is enabled).
 		pub fn debug(&mut self, msg: &str) {
 				if !self.config.debug { return; }
 				// Use a dim white/grey for debug messages.
-				let _ = self.print_with_color(Color::White, "· ", msg);
+				let _ = self.print_with_color(ESC::CYAN, ART::Boto, msg);
 		}
+
+  		/// Print a debug message (only shown when debug mode is enabled).
+		pub fn devlog(&mut self, msg: &str) {
+				if !self.config.dev { return; }
+				// Use a dim white/grey for debug messages.
+				let _ = self.print_with_color(ESC::RED2, ART::Boto, msg);
+		}
+
 
 		/// Print a trace message (only shown when trace mode is enabled).
 		pub fn trace(&mut self, msg: &str) {
 				if !self.config.trace { return; }
-				let _ = self.print_with_color(Color::Cyan, "→ ", msg);
+				let _ = self.print_with_color(ESC::CYAN, ART::Dots, msg);
 		}
 
 		/// Print a silly/magic message (only shown when silly mode is enabled).
 		pub fn magic(&mut self, msg: &str) {
 				if !self.config.silly { return; }
-				let _ = self.print_with_color(Color::Magenta, "✨ ", msg);
+				let _ = self.print_with_color(ESC::PURPLE, ART::Spark, msg);
 		}
 
 
@@ -265,7 +274,7 @@ impl Stderr {
         let right_bar = repeat_char(fill_char, right_fill);
         
         let mut spec = ColorSpec::new();
-        spec.set_fg(Some(Color::Blue)).set_bold(true);
+        spec.set_fg(Some(ESC::BLUE)).set_bold(true);
 
         self.writer.reset()?;
         write!(&mut self.writer, "{} ", left_bar)?;
@@ -303,7 +312,7 @@ impl Stderr {
         let top_border = std::iter::repeat(chars.horizontal).take(box_width).collect::<String>();
         let bottom_border = &top_border; // It's the same
 
-        self.set_fg(Color::White)?;
+        self.set_fg(ESC::WHITE)?;
         writeln!(&mut self.writer, "{}{}{}", chars.top_left, top_border, chars.top_right)?;
         for line in &lines {
             writeln!(&mut self.writer, "{} {:<width$} {}", chars.vertical, line, chars.vertical, width = content_width)?;
@@ -393,7 +402,7 @@ impl<'a> ConfirmBuilder<'a> {
 
         loop {
             // Always print the final question part, even if boxed.
-            self.stderr.set_bold_fg(Color::White)?;
+            self.stderr.set_bold_fg(ESC::WHITE)?;
             if self.use_box {
                 write!(&mut self.stderr.writer, "Your choice [y/n/q] > ")?;
             } else {
