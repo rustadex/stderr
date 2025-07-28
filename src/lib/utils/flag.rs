@@ -15,7 +15,7 @@ use crate::esc::boxes::{BorderStyle, BoxChars};
 /// * `style`: The `BorderStyle` to use for the table.
 pub fn flag_table<T>(bitmask: T, labels: &[&str], style: BorderStyle) -> String
 where
-    T: std::ops::Shr<usize, Output = T> + std::ops::BitAnd<T, Output = T> + From<u8> + Copy,
+  T: std::ops::Shr<usize, Output = T> + std::ops::BitAnd<T, Output = T> + From<u8> + Copy + PartialEq,
 {
     let chars = BoxChars::from_style(&style);
     let bitcount = labels.len();

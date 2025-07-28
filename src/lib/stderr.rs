@@ -30,36 +30,38 @@
 //! }
 //! ```
 
-use std::io::{self, IsTerminal, Write};
+use std::io::{self, IsTerminal, Write, Error};
+use terminal_size::terminal_size;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 use crate::esc::boxes::{BorderStyle, BoxChars};
-use crate::utils::flag;
+use crate::utils::flag::flag_table as bitmap;
+
 
 // --- Standalone Utility Functions (As you wanted) ---
 
-/// Creates a string by repeating a character `n` times.
-pub fn repeat_char(ch: char, n: usize) -> String {
-  std::iter::repeat(ch).take(n).collect()
-}
+  /// Creates a string by repeating a character `n` times.
+  pub fn repeat_char(ch: char, n: usize) -> String {
+    std::iter::repeat(ch).take(n).collect()
+  }
 
-/// Gets the terminal width from the environment or a default.
-pub fn term_width() -> usize {
-  std::env::var("COLUMNS")
-    .ok()
-    .and_then(|v| v.parse::<usize>().ok())
-    .unwrap_or(80)
-}
+  /// Gets the terminal width from the environment or a default.
+  pub fn term_width() -> usize {
+      terminal_size()
+        .map(|(w, _h)| w.0 as usize)
+        .unwrap_or(80)
+  }
 
-/// Reads an environment variable, returning a Result.
-pub fn env(key: &str) -> Result<String, std::env::VarError> {
-  std::env::var(key)
-}
+  /// Reads an environment variable, returning a Result.
+  pub fn env(key: &str) -> Result<String, std::env::VarError> {
+    std::env::var(key)
+  }
 
-pub fn readline() -> io::Result<String> {
-  let mut input = String::new();
-  io::stdin().read_line(&mut input)?; // Now this works!
-  Ok(input) // If successful, wrap the result in `Ok`
-}
+  #[allow(dead_code)] 
+  pub fn readline() -> io::Result<String> {
+    let mut input = String::new();
+    io::stdin().read_line(&mut input)?; // Now this works!
+    Ok(input) // If successful, wrap the result in `Ok`
+  }
 
 // --- The Main Stderr Struct ---
 
@@ -85,9 +87,9 @@ impl StderrConfig {
       Self {
         quiet: env("QUIET_MODE").is_ok(),
         debug: env("DEBUG_MODE").is_ok(),
+        dev: env("DEV_MODE").is_ok(),
         trace: env("TRACE_MODE").is_ok(),
         silly: env("SILLY_MODE").is_ok(),
-        silly: env("DEV_MODE").is_ok(),
       }
     }
 }
@@ -97,7 +99,7 @@ impl StderrConfig {
 /// A configurable logger for emitting colored messages to stderr.
 pub struct Stderr {
     config: StderrConfig,
-    stream: StandardStream,
+    writer: StandardStream,
     width: usize,
 }
 
@@ -117,7 +119,7 @@ impl Stderr {
     pub fn new() -> Self {
       Self {
         config: StderrConfig::from_env(), // Smart default!
-        stream: StandardStream::stderr(ColorChoice::Auto),
+        writer: StandardStream::stderr(ColorChoice::Auto),
         width: term_width(),
       }
     }
@@ -126,7 +128,7 @@ impl Stderr {
     pub fn with_config(config: StderrConfig) -> Self {
       Self {
         config,
-        stream: StandardStream::stderr(ColorChoice::Auto),
+        writer: StandardStream::stderr(ColorChoice::Auto),
         width: term_width(),
       }
     }
@@ -134,61 +136,61 @@ impl Stderr {
 
     /// Overrides the quiet setting.
     pub fn set_quiet(mut self, quiet: bool) -> Self {
-      self.quiet = quiet;
+      self.config.quiet = quiet;
       self
     }
 
     /// Overrides the debug setting.
     pub fn set_debug(mut self, debug: bool) -> Self {
-      self.debug = debug;
+      self.config.debug = debug;
       self
     }
 
     /// Overrides the trace setting.
     pub fn set_trace(mut self, trace: bool) -> Self {
-      self.trace = trace;
+      self.config.trace = trace;
       self
     }
 
     /// Overrides the silly setting.
     pub fn set_silly(mut self, silly: bool) -> Self {
-      self.silly = silly;
+      self.config.silly = silly;
       self
     }
 
     /// Overrides the silly setting.
     pub fn set_dev(mut self, dev: bool) -> Self {
-      self.dev = dev;
+      self.config.dev = dev;
       self
     }
 
-    pub fn resolve_flags() => self {
-      self
-    }
+    // pub fn resolve_opts(mut self) -> Self {
+    //   self
+    // }
     
     // --- Private Helpers ---
     pub fn set_fg(&mut self, color: Color) -> io::Result<()> {
-      self.stream.set_color(ColorSpec::new().set_fg(Some(color)))?;
+      self.writer.set_color(ColorSpec::new().set_fg(Some(color)))?;
       Ok(())
     }
 
-    pub fn set_bold_fg(&mut self, color: Color) -> io::Result<()> {
-      self.stream.set_color(ColorSpec::new().set_fg(Some(color)).set_bold(true));
-      Ok(())
+    pub fn set_bold_fg(&mut self, color: Color) -> io::Result<()> { 
+        self.writer.set_color(ColorSpec::new().set_fg(Some(color)).set_bold(true)) 
     }
+
 
     fn set_color_spec(&mut self, spec: &ColorSpec) -> io::Result<()> {
-      self.stream.set_color(spec)
+      self.writer.set_color(spec)
     }
 
-    fn print_with_color(&mut self, color: Color, prefix: &str, msg: &str) -> io::Result<()> {
-        if self.quiet { return Ok(()); }
+    fn print_with_color(&mut self, color: Color, prefix: &str, msg: &str) -> Result<(), Error> {
+        if self.config.quiet { return Ok(()); }
 
         self.set_fg(color)?; // Use the helper
-        write!(&mut self.stream, "{}", prefix)?;
-        self.stream.reset()?;
-        writeln!(&mut self.stream, "{}", msg)?;
-        Ok(());
+        write!(&mut self.writer, "{}", prefix)?;
+        self.writer.reset()?;
+        writeln!(&mut self.writer, "{}", msg)?;
+        Ok(())
     }
 
     // --- High-Level Logging API ---
@@ -220,34 +222,40 @@ impl Stderr {
 
   		/// Print a debug message (only shown when debug mode is enabled).
 		pub fn debug(&mut self, msg: &str) {
-				if !self.debug { return; }
+				if !self.config.debug { return; }
 				// Use a dim white/grey for debug messages.
 				let _ = self.print_with_color(Color::White, "· ", msg);
 		}
 
 		/// Print a trace message (only shown when trace mode is enabled).
 		pub fn trace(&mut self, msg: &str) {
-				if !self.trace { return; }
+				if !self.config.trace { return; }
 				let _ = self.print_with_color(Color::Cyan, "→ ", msg);
 		}
 
 		/// Print a silly/magic message (only shown when silly mode is enabled).
 		pub fn magic(&mut self, msg: &str) {
-				if !self.silly { return; }
+				if !self.config.silly { return; }
 				let _ = self.print_with_color(Color::Magenta, "✨ ", msg);
 		}
 
 
-
+    pub fn help(&mut self, help_text: &str) -> io::Result<()> {
+        if self.config.quiet {
+            return Ok(());
+        }
+        // Re-use the powerful `boxed` function with a sensible default!
+        self.boxed(help_text, BorderStyle::Light)
+    }
     
     // --- Formatting and Interactive API ---
     
     pub fn banner(&mut self, msg: &str, fill_char: char) -> io::Result<()> {
-        if self.quiet { return Ok(()); }
+        if self.config.quiet { return Ok(()); }
         
         let msg_len = msg.chars().count() + 2; // account for one space on each side
         if msg_len >= self.width {
-            writeln!(&mut self.stream, " {} ", msg)?;
+            writeln!(&mut self.writer, " {} ", msg)?;
             return Ok(());
         }
         let total_fill = self.width - msg_len;
@@ -259,12 +267,12 @@ impl Stderr {
         let mut spec = ColorSpec::new();
         spec.set_fg(Some(Color::Blue)).set_bold(true);
 
-        self.stream.reset()?;
-        write!(&mut self.stream, "{} ", left_bar)?;
+        self.writer.reset()?;
+        write!(&mut self.writer, "{} ", left_bar)?;
         self.set_color_spec(&spec)?;
-        write!(&mut self.stream, "{}", msg)?;
-        self.stream.reset()?;
-        writeln!(&mut self.stream, " {}", right_bar)?;
+        write!(&mut self.writer, "{}", msg)?;
+        self.writer.reset()?;
+        writeln!(&mut self.writer, " {}", right_bar)?;
         
         Ok(())
     }
@@ -304,15 +312,15 @@ impl Stderr {
         self.writer.reset()
     }
 
-    /// This is a convenience wrapper around the `util::flag::flag_table` function.
+    /// This is a convenience wrapper around the `util::bitmap` function.
     pub fn print_flag_table<T>(&mut self, bitmask: T, labels: &[&str], style: BorderStyle) -> io::Result<()>
     where
-        T: std::ops::Shr<usize, Output = T> + std::ops::BitAnd<T, Output = T> + From<u8> + Copy,
+        T: std::ops::Shr<usize, Output = T> + std::ops::BitAnd<T, Output = T> + From<u8> + Copy + PartialEq,
     {
         if self.config.quiet { return Ok(()); }
         
         // 1. Generate the table string using the pure utility function.
-        let table_string = flag::flag_table(bitmask, labels, style);
+        let table_string = bitmap(bitmask, labels, style);
 
         // 2. Print the generated string.
         write!(&mut self.writer, "{}", table_string)?;
@@ -372,8 +380,8 @@ impl<'a> ConfirmBuilder<'a> {
     }
 
     /// Asks the user for confirmation and returns the result.
-    pub fn ask(mut self) -> io::Result<Option<bool>> {
-        if self.stderr.config.is_quiet { return Ok(Some(true)); }
+    pub fn ask(self) -> io::Result<Option<bool>> {
+        if self.stderr.config.quiet { return Ok(Some(true)); }
         if !io::stdin().is_terminal() {
             return Err(io::Error::new(io::ErrorKind::Unsupported, "Cannot ask for confirmation in a non-interactive terminal."));
         }
@@ -401,7 +409,10 @@ impl<'a> ConfirmBuilder<'a> {
                 'y' | 'Y' => return Ok(Some(true)),
                 'n' | 'N' => return Ok(Some(false)),
                 'q' | 'Q' => return Ok(None),
-                _ => { self.stderr.warn("Invalid input. Please try again.")?; }
+                _ => {
+                    let _ = self.stderr.warn("Invalid input. Please try again.");
+                }
+
             }
         }
     }

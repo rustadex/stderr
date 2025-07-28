@@ -1,6 +1,7 @@
 // src/lib.rs
 
 
+
 #[path = "lib/stderr.rs"]
 mod stderr;
 
@@ -10,6 +11,8 @@ mod esc;
 #[path = "lib/utils.rs"]
 mod utils;
 
+#[path = "lib/meta.rs"]
+mod meta;
 
 // --- HOIST ---
 
@@ -18,21 +21,21 @@ pub use stderr::{Stderr, StderrConfig};
 
 pub use esc::colors::Color;
 pub use esc::style::Style;
-pub use esc::glyphs::{Glyph, debug_glyphs_string}; // (Assuming your updated glyphs.rs)
-
+pub use esc::glyphs::{Glyph, debug_glyphs_string as debug_glyphs}; 
 
 
 pub use esc::boxes::{BorderStyle, BoxChars};
 
 
-pub use utils::trace::TraceLogger;
-pub use utils::flag::flag_table;
+//pub use utils::trace::TraceLogger;
+
+pub use utils::flag::flag_table as bitmap;
+
+pub use meta::{help_string, STDERR_VERSION as VERSION };
 
 // --- ALIASES ---
 
 pub type Logger = Stderr;
 pub type Config = StderrConfig;
 
-pub type debug_glyphs = debug_glyphs_string;
 
-pub use utils::flag::flag_table as bitmap;
