@@ -2,6 +2,7 @@
 
 use stderr::{
     Stderr,
+    Color as ESC,
     BorderStyle,
     VERSION,
     bitmap,
@@ -59,7 +60,7 @@ fn main() -> Result<()> {
     let prompt_text = "This is a critical action that requires confirmation.\nAll unsaved data will be lost.";
     
     // `confirm_builder().ask()` returns a Result, so we use `match`.
-    match log.confirm_builder(prompt_text).boxed(true).style(BorderStyle::Heavy).ask() {
+    match log.confirm_builder(prompt_text).boxed(true).style(BorderStyle::Heavy).prompt_color(ESC::ORANGE).ask() {
         Ok(Some(true)) => log.okay("User confirmed the action."),
         Ok(Some(false)) => log.warn("User denied the action."),
         Ok(None) => log.note("User quit the prompt."),
@@ -67,7 +68,7 @@ fn main() -> Result<()> {
     }
     println!();
 
-    log.note(&format!("Showcase complete for stderr version {}.", VERSION));
+    log.info(&format!("Showcase complete for stderr version {}.", VERSION));
 
     Ok(())
 }

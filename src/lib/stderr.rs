@@ -188,17 +188,24 @@ impl Stderr {
     fn print_with_color<P: Display>(&mut self, color: Color, prefix: P, msg: &str) -> io::Result<()> {        
       if self.config.quiet { return Ok(()); }
       self.set_fg(color)?; // Use the helper
-      write!(&mut self.writer, "{}", prefix)?;
-      self.writer.reset()?;
+      write!(&mut self.writer, "{} ", prefix)?;
       writeln!(&mut self.writer, "{}", msg)?;
+      self.writer.reset()?;
       Ok(())
     }
 
     // --- High-Level Logging API ---
 
+
+    pub fn fatal(&mut self, msg: &str) -> ! {
+        let _ = self.error(msg);
+        std::process::exit(1);
+    }
+
+
 		/// Print an error message (always displayed).
 		pub fn error(&mut self, msg: &str) {
-				let _ = self.print_with_color(ESC::RED, ART::Mark, msg);
+				let _ = self.print_with_color(ESC::RED, ART::Fail, msg);
 		}
 
 		/// Print a warning message (suppressed only in quiet mode).
@@ -208,7 +215,7 @@ impl Stderr {
 
 		/// Print an informational message (suppressed only in quiet mode).
 		pub fn info(&mut self, msg: &str) {
-				let _ = self.print_with_color(ESC::BLUE, ART::Info, msg);
+				let _ = self.print_with_color(ESC::BLUE, ART::Lambda, msg);
 		}
 
 		/// Print a success/okay message (suppressed only in quiet mode).
@@ -361,6 +368,7 @@ pub struct ConfirmBuilder<'a> {
     prompt: &'a str,
     use_box: bool,
     style: BorderStyle,
+    prompt_color: Option<Color>,
 }
 
 // Add this impl block in `src/lib/stderr.rs`
@@ -373,7 +381,13 @@ impl<'a> ConfirmBuilder<'a> {
             prompt,
             use_box: false, // Don't use a box by default
             style: BorderStyle::default(), // Default to Light
+            prompt_color: None,
         }
+    }
+
+    pub fn prompt_color(mut self, color: Color) -> Self {
+        self.prompt_color = Some(color); // <-- ADD THIS NEW METHOD
+        self
     }
 
     /// Wraps the confirmation prompt in a box.
@@ -401,28 +415,36 @@ impl<'a> ConfirmBuilder<'a> {
         }
 
         loop {
-            // Always print the final question part, even if boxed.
-            self.stderr.set_bold_fg(ESC::WHITE)?;
-            if self.use_box {
-                write!(&mut self.stderr.writer, "Your choice [y/n/q] > ")?;
-            } else {
-                write!(&mut self.stderr.writer, "{} [y/n/q] > ", self.prompt)?;
+  
+          if let Some(color) = self.prompt_color {
+              // If yes, use it.
+              self.stderr.set_bold_fg(color)?;
+          } else {
+              // If no, use the default bold white.
+              self.stderr.set_bold_fg(ESC::WHITE)?;
+          }
+          if self.use_box {
+              write!(&mut self.stderr.writer, "Your choice [y/n/q] -> ")?;
+          } else {
+              write!(&mut self.stderr.writer, "{} [y/n/q] > ", self.prompt)?;
+          }
+          
+          self.stderr.writer.reset()?;
+          self.stderr.writer.flush()?;
+
+          let mut input = String::new();
+          io::stdin().read_line(&mut input)?;
+
+          match input.trim().chars().next().unwrap_or_default() {
+            'y' | 'Y' => return Ok(Some(true)),
+            'n' | 'N' => return Ok(Some(false)),
+            'q' | 'Q' => return Ok(None),
+            _ => {
+                let _ = self.stderr.warn("Invalid input. Please try again.");
             }
-            self.stderr.writer.reset()?;
-            self.stderr.writer.flush()?;
 
-            let mut input = String::new();
-            io::stdin().read_line(&mut input)?;
-
-            match input.trim().chars().next().unwrap_or_default() {
-                'y' | 'Y' => return Ok(Some(true)),
-                'n' | 'N' => return Ok(Some(false)),
-                'q' | 'Q' => return Ok(None),
-                _ => {
-                    let _ = self.stderr.warn("Invalid input. Please try again.");
-                }
-
-            }
+          }
         }
+
     }
 }

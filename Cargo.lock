@@ -70,6 +70,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "rdx-stderr"
+version = "0.4.0"
+dependencies = [
+ "function_name",
+ "strum",
+ "strum_macros",
+ "termcolor",
+ "terminal_size",
+]
+
+[[package]]
 name = "rustix"
 version = "0.38.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -87,17 +98,6 @@ name = "rustversion"
 version = "1.0.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a0d197bd2c9dc6e53b84da9556a69ba4cdfab8619eb41a8bd1cc2027a0f6b1d"
-
-[[package]]
-name = "stderr"
-version = "0.4.0"
-dependencies = [
- "function_name",
- "strum",
- "strum_macros",
- "termcolor",
- "terminal_size",
-]
 
 [[package]]
 name = "strum"
