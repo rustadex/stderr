@@ -16,6 +16,10 @@ years of handcrafted Bash scripts.
   <img src="https://raw.githubusercontent.com/rustadex/stderr/main/.github/assets/pretty.png" alt="A demo of the rdx-stderr logger in action" width="600">
 </p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rustadex/stderr/main/.github/assets/boxes.png" alt="A demo of the rdx-stderr logger in action" width="600">
+</p>
+
 > Internally referenced as `stderr`
 
 ## Using Stderr
@@ -94,6 +98,11 @@ if stderr.confirm_builder(prompt)
     stderr.warn("Erasing all data...")?;
 }
 ```
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rustadex/stderr/main/.github/assets/grid.png" alt="A demo of the rdx-stderr logger in action" width="600">
+</p>
+
 
 ## Tree
 
