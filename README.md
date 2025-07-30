@@ -16,7 +16,8 @@
         │   ├── glyphs.rs
         │   └── style.rs
         ├── utils       <-- The `esc` module root
-        │   └─── trace.rs
+        │   ├── grid.rs
+        │   └── flag.rs
         └── stderr.rs   <-- The `stderr` module implementation
         └── utils.rs
 ```
@@ -27,7 +28,7 @@
 
 
 
-use RdxStderr::{Stderr, StderrConfig}; // import StderrConfig or use default
+use stderr::{Stderr, StderrConfig}; // import StderrConfig or use default
 
 fn main() {
     let config = StderrConfig {
@@ -56,7 +57,7 @@ fn main() {
 ## Use Color, Style, Glyphs
 ```rust
 // The `use` paths are simple and clean, hiding the `pkgs` directory.
-use stderr::{Stderr, Color, Style, Glyph, TraceLogger};
+use stderr::{Stderr, Color, Style, Glyph};
 
 //using unicode glyphs and color escapes
 fn main() {
