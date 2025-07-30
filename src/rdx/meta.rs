@@ -1,9 +1,8 @@
-// src/lib/meta.rs
+//! src/lib/meta.rs
 
 
 pub const STDERR_VERSION: &str = "0.4.0";
 
-// The help text itself, as a multi-line string constant.
 const HELP_TEXT: &str = "
 stderr - A Rust library for rich terminal output.
 

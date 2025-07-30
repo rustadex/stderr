@@ -1,6 +1,6 @@
-// esc/boxes.rs
+//!  esc/boxes.rs
 
-//re : https://en.wikipedia.org/wiki/Box-drawing_characters
+//! re : https://en.wikipedia.org/wiki/Box-drawing_characters
   #[derive(Default)]
   pub enum BorderStyle {
       #[default]

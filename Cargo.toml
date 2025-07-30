@@ -12,14 +12,12 @@ keywords = ["rdx", "rustadex", "ninja", "qode", "cli", "terminal", "logger", "co
 categories = ["command-line-interface"]
 
 [lib]
+name = "stderr"
 path = "src/lib.rs"
 
 [dependencies]
-# log = "0.4" ~ not yet
 termcolor = "1.4"
 function_name = "0.3" #tracer
 terminal_size = "0.3"
 strum = "0.26"
 strum_macros = "0.26"
-
-

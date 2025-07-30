@@ -1,5 +1,12 @@
 
-// esc/colors.rs
+//!  in src/esc/colors.rs
+
+//! # Terminal Color Codes
+//!
+//! Functions and types for manipulating text color in the terminal.
+
+/// A vibrant, 24-bit color.
+///
 use termcolor::Color as TermColor;
 
 
@@ -36,11 +43,18 @@ impl Color {
   pub const MAGENTA2: TermColor = TermColor::Ansi256(198);
 }
 
+
+
+pub struct TrueColor {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+}
+
 //   let mut writer = StandardStream::stdout(ColorChoice::Auto);
 
 // This is crucial after a series of `write!` calls.
 //writer.reset()?;
-    
+
 // Finally, print the newline.
 //writeln!(&mut writer)?;
-

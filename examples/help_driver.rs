@@ -1,12 +1,12 @@
 // examples/show_help.rs
 
 // Import the items from your library
-use stderr::{help_string, Stderr};
+use stderr::{Stderr, help_string};
 
 fn main() -> std::io::Result<()> {
     // Create a logger instance
     // Personally I prefer to call it 'stderr' call it log or whatever you want
-    let mut logger = Stderr::new(); 
+    let mut logger = Stderr::new();
 
     // Get the help text from your new function
     let help_text = help_string();

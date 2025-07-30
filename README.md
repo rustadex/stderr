@@ -2,21 +2,6 @@
 
 
 
-## License
-
-This project is **dual-licensed**:
-
-- **AGPLv3** — Free for personal, academic, or non-commercial use.
-- **Commercial license** — Required for any commercial, enterprise, or revenue-generating use.
-
-Each package in the Rustadex is individually licensed under the GNU AGPLv3.
-
-Use of the entire Codex, any bundled subset, or derivative works for commercial, enterprise, or business development purposes requires a commercial license. This includes usage in internal tools, client-facing products, hosted services, or revenue-generating projects.
-
-We're committed to supporting individual developers, students, and the open-source community — the AGPLv3 lets you use and modify freely. If you're a company or startup, please do the right thing and reach out for licensing.
-
-
-To inquire about commercial licensing, contact [qode(no-botz)ninjax[at]gmail.com].
 
 ## Tree
 
@@ -24,16 +9,16 @@ To inquire about commercial licensing, contact [qode(no-botz)ninjax[at]gmail.com
 ├── Cargo.toml
 └── src
     ├── lib.rs          <-- The Public API definition
-    └── pkgs
+    └── lib
         ├── esc.rs      <-- The `esc` module root
         ├── esc
         │   ├── color.rs
         │   ├── glyphs.rs
         │   └── style.rs
         ├── utils       <-- The `esc` module root
-        │   └─── trace.rs  
+        │   └─── trace.rs
         └── stderr.rs   <-- The `stderr` module implementation
-        └── utils.rs  
+        └── utils.rs
 ```
 
 ## Using Stderr
@@ -89,7 +74,7 @@ fn main() {
 
 }
 ```
-## Confirm 
+## Confirm
 
 ```rust
 let mut stderr = Stderr::new();
@@ -114,3 +99,20 @@ if stderr.confirm_builder(prompt)
     stderr.warn("Erasing all data...")?;
 }
 ```
+
+
+## License
+
+This project is **dual-licensed**:
+
+- **AGPLv3** — Free for personal, academic, or non-commercial use.
+- **Commercial license** — Required for any commercial, enterprise, or revenue-generating use.
+
+Each package in the Rustadex is individually licensed under the GNU AGPLv3.
+
+Use of the entire Codex, any bundled subset, or derivative works for commercial, enterprise, or business development purposes requires a commercial license. This includes usage in internal tools, client-facing products, hosted services, or revenue-generating projects.
+
+We're committed to supporting individual developers, students, and the open-source community — the AGPLv3 lets you use and modify freely. If you're a company or startup, please do the right thing and reach out for licensing.
+
+
+To inquire about commercial licensing, contact [qode(no-botz)ninjax[at]gmail.com].

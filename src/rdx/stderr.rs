@@ -1,4 +1,4 @@
-// src/stderr_lib.rs
+//! src/lib/stderr.rs
 
 //! A simple library for printing colorful, structured messages to stderr.
 //!
@@ -35,11 +35,10 @@ use std::io::{self, IsTerminal, Write};
 use terminal_size::terminal_size;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 use crate::esc::boxes::{BorderStyle, BoxChars};
-use crate::utils::flag::flag_table as bitmap;
-use crate::esc::colors::{Color as ESC};
-use crate::esc::glyphs::{Glyph as ART};
+use crate::utils::flag::flag_table;
+pub use crate::esc::colors::{Color as ESC};
+pub use crate::esc::glyphs::{Glyph as ART};
 
-// --- Standalone Utility Functions (As you wanted) ---
 
   /// Creates a string by repeating a character `n` times.
   pub fn repeat_char(ch: char, n: usize) -> String {
@@ -58,7 +57,7 @@ use crate::esc::glyphs::{Glyph as ART};
     std::env::var(key)
   }
 
-  #[allow(dead_code)] 
+  #[allow(dead_code)]
   pub fn readline() -> io::Result<String> {
     let mut input = String::new();
     io::stdin().read_line(&mut input)?; // Now this works!
@@ -66,10 +65,6 @@ use crate::esc::glyphs::{Glyph as ART};
   }
 
 // --- The Main Stderr Struct ---
-
-// --- Configuration Struct (As you liked) ---
-
-
 
 
 
@@ -120,14 +115,14 @@ impl Stderr {
     /// the environment. This is the primary, "smart" constructor.
     pub fn new() -> Self {
       Self {
-        config: StderrConfig::from_env(), // Smart default!
+        config: StderrConfig::from_env(), // Smart default
         writer: StandardStream::stderr(ColorChoice::Auto),
         width: term_width(),
       }
     }
 
     /// Creates a new logger with a specific, user-provided configuration.
-    pub fn with_config(config: StderrConfig) -> Self {
+    pub fn with_config(self, config: StderrConfig) -> Self {
       Self {
         config,
         writer: StandardStream::stderr(ColorChoice::Auto),
@@ -169,33 +164,71 @@ impl Stderr {
     // pub fn resolve_opts(mut self) -> Self {
     //   self
     // }
-    
-    // --- Private Helpers ---
+
+    // --- Convenience Helpers ---
+    pub fn set_bg(&mut self, color: Color) -> io::Result<()> {
+      self.writer.set_color(ColorSpec::new().set_bg(Some(color)))?;
+      Ok(())
+    }
+
     pub fn set_fg(&mut self, color: Color) -> io::Result<()> {
       self.writer.set_color(ColorSpec::new().set_fg(Some(color)))?;
       Ok(())
     }
 
-    pub fn set_bold_fg(&mut self, color: Color) -> io::Result<()> { 
-        self.writer.set_color(ColorSpec::new().set_fg(Some(color)).set_bold(true)) 
+    pub fn set_bold_fg(&mut self, color: Color) -> io::Result<()> {
+        self.writer.set_color(ColorSpec::new().set_fg(Some(color)).set_bold(true))
     }
 
 
-    fn set_color_spec(&mut self, spec: &ColorSpec) -> io::Result<()> {
-      self.writer.set_color(spec)
+    pub fn set_color(&mut self, spec: &ColorSpec) -> io::Result<()> {
+        if self.config.quiet { return Ok(()); }
+        self.writer.set_color(spec)
     }
 
-    fn print_with_color<P: Display>(&mut self, color: Color, prefix: P, msg: &str) -> io::Result<()> {        
-      if self.config.quiet { return Ok(()); }
-      self.set_fg(color)?; // Use the helper
-      write!(&mut self.writer, "{} ", prefix)?;
-      writeln!(&mut self.writer, "{}", msg)?;
-      self.writer.reset()?;
-      Ok(())
+    /// Prints a colored message with a prefix and a newline, then resets.
+    pub fn print_with_prefix(&mut self, color: Color, prefix: impl Display, msg: &str) -> io::Result<()> {
+        if self.config.quiet { return Ok(()); }
+        self.set_fg(color)?; // Use the helper
+        write!(&mut self.writer, "{} ", prefix)?;
+        writeln!(&mut self.writer, "{}", msg)?;
+        self.writer.reset()
+    }
+
+    /// Prints a simple, uncolored message with a newline and resets the terminal.
+    pub fn print(&mut self, msg: &str) -> io::Result<()> {
+        if self.config.quiet { return Ok(()); }
+        writeln!(&mut self.writer, "{}", msg)?;
+        self.writer.reset()
+    }
+
+    /// Writes a piece of text to the stream WITHOUT a newline.
+    /// Use this to build up a line from multiple parts.
+    pub fn write(&mut self, msg: impl Display) -> io::Result<()> {
+        if self.config.quiet { return Ok(()); }
+        write!(&mut self.writer, "{}", msg)
+    }
+
+    /// Resets all terminal attributes (like color and boldness) to their default.
+    pub fn reset(&mut self) -> io::Result<()> {
+        if self.config.quiet { return Ok(()); }
+        self.writer.reset()
+    }
+
+    /// Prints a newline to the stream.
+    pub fn newline(&mut self) -> io::Result<()> {
+        if self.config.quiet { return Ok(()); }
+        writeln!(&mut self.writer)?;
+        Ok(())
     }
 
     // --- High-Level Logging API ---
 
+
+    /// Print a log message
+	pub fn log(&mut self, msg: &str) {
+		let _ = self.print(msg);
+	}
 
     pub fn fatal(&mut self, msg: &str) -> ! {
         let _ = self.error(msg);
@@ -203,57 +236,57 @@ impl Stderr {
     }
 
 
-		/// Print an error message (always displayed).
-		pub fn error(&mut self, msg: &str) {
-				let _ = self.print_with_color(ESC::RED, ART::Fail, msg);
-		}
+	/// Print an error message (always displayed).
+	pub fn error(&mut self, msg: &str) {
+		let _ = self.print_with_prefix(ESC::RED, ART::Fail, msg);
+	}
 
-		/// Print a warning message (suppressed only in quiet mode).
-		pub fn warn(&mut self, msg: &str) {
-				let _ = self.print_with_color(ESC::ORANGE, ART::Delta, msg);
-		}
+	/// Print a warning message (suppressed only in quiet mode).
+	pub fn warn(&mut self, msg: &str) {
+		let _ = self.print_with_prefix(ESC::ORANGE, ART::Delta, msg);
+	}
 
-		/// Print an informational message (suppressed only in quiet mode).
-		pub fn info(&mut self, msg: &str) {
-				let _ = self.print_with_color(ESC::BLUE, ART::Lambda, msg);
-		}
+	/// Print an informational message (suppressed only in quiet mode).
+	pub fn info(&mut self, msg: &str) {
+		let _ = self.print_with_prefix(ESC::BLUE, ART::Lambda, msg);
+	}
 
-		/// Print a success/okay message (suppressed only in quiet mode).
-		pub fn okay(&mut self, msg: &str) {
-				let _ = self.print_with_color(ESC::GREEN, ART::Pass, msg);
-		}
+	/// Print a success/okay message (suppressed only in quiet mode).
+	pub fn okay(&mut self, msg: &str) {
+		let _ = self.print_with_prefix(ESC::GREEN, ART::Pass, msg);
+	}
 
-		/// Print a note (suppressed only in quiet mode).
-		pub fn note(&mut self, msg: &str) {
-				let _ = self.print_with_color(ESC::BLUE, ART::Right, msg);
-		}
+	/// Print a note (suppressed only in quiet mode).
+	pub fn note(&mut self, msg: &str) {
+		let _ = self.print_with_prefix(ESC::BLUE, ART::Right, msg);
+	}
 
-  		/// Print a debug message (only shown when debug mode is enabled).
-		pub fn debug(&mut self, msg: &str) {
-				if !self.config.debug { return; }
-				// Use a dim white/grey for debug messages.
-				let _ = self.print_with_color(ESC::CYAN, ART::Boto, msg);
-		}
+	/// Print a debug message (only shown when debug mode is enabled).
+	pub fn debug(&mut self, msg: &str) {
+		if !self.config.debug { return; }
+		// Use a dim white/grey for debug messages.
+		let _ = self.print_with_prefix(ESC::CYAN, ART::Boto, msg);
+	}
 
-  		/// Print a debug message (only shown when debug mode is enabled).
-		pub fn devlog(&mut self, msg: &str) {
-				if !self.config.dev { return; }
-				// Use a dim white/grey for debug messages.
-				let _ = self.print_with_color(ESC::RED2, ART::Boto, msg);
-		}
+	/// Print a dev message (only shown when dev mode is enabled).
+	pub fn devlog(&mut self, msg: &str) {
+		if !self.config.dev { return; }
+		// Use a dim white/grey for debug messages.
+		let _ = self.print_with_prefix(ESC::RED2, ART::Boto, msg);
+	}
 
 
-		/// Print a trace message (only shown when trace mode is enabled).
-		pub fn trace(&mut self, msg: &str) {
-				if !self.config.trace { return; }
-				let _ = self.print_with_color(ESC::CYAN, ART::Dots, msg);
-		}
+	/// Print a trace message (only shown when trace mode is enabled).
+	pub fn trace(&mut self, msg: &str) {
+		if !self.config.trace { return; }
+		let _ = self.print_with_prefix(ESC::CYAN, ART::Dots, msg);
+	}
 
-		/// Print a silly/magic message (only shown when silly mode is enabled).
-		pub fn magic(&mut self, msg: &str) {
-				if !self.config.silly { return; }
-				let _ = self.print_with_color(ESC::PURPLE, ART::Spark, msg);
-		}
+	/// Print a silly/magic message (only shown when silly mode is enabled).
+	pub fn magic(&mut self, msg: &str) {
+		if !self.config.silly { return; }
+		let _ = self.print_with_prefix(ESC::PURPLE, ART::Spark, msg);
+	}
 
 
     pub fn help(&mut self, help_text: &str) -> io::Result<()> {
@@ -263,12 +296,12 @@ impl Stderr {
         // Re-use the powerful `boxed` function with a sensible default!
         self.boxed(help_text, BorderStyle::Light)
     }
-    
+
     // --- Formatting and Interactive API ---
-    
+
     pub fn banner(&mut self, msg: &str, fill_char: char) -> io::Result<()> {
         if self.config.quiet { return Ok(()); }
-        
+
         let msg_len = msg.chars().count() + 2; // account for one space on each side
         if msg_len >= self.width {
             writeln!(&mut self.writer, " {} ", msg)?;
@@ -279,30 +312,30 @@ impl Stderr {
         let right_fill = total_fill - left_fill;
         let left_bar = repeat_char(fill_char, left_fill);
         let right_bar = repeat_char(fill_char, right_fill);
-        
+
         let mut spec = ColorSpec::new();
         spec.set_fg(Some(ESC::BLUE)).set_bold(true);
 
         self.writer.reset()?;
         write!(&mut self.writer, "{} ", left_bar)?;
-        self.set_color_spec(&spec)?;
+        self.set_color(&spec)?;
         write!(&mut self.writer, "{}", msg)?;
         self.writer.reset()?;
         writeln!(&mut self.writer, " {}", right_bar)?;
-        
+
         Ok(())
     }
-    
+
     /// Renders a message in a box with light, single-line borders.
     pub fn box_light(&mut self, msg: &str) -> io::Result<()> {
         self.boxed(msg, BorderStyle::Light)
     }
-    
+
     /// Renders a message in a box with heavy, bold borders.
     pub fn box_heavy(&mut self, msg: &str) -> io::Result<()> {
         self.boxed(msg, BorderStyle::Heavy)
     }
-    
+
     /// Renders a message in a box with double-line borders.
     pub fn box_double(&mut self, msg: &str) -> io::Result<()> {
         self.boxed(msg, BorderStyle::Double)
@@ -334,11 +367,8 @@ impl Stderr {
         T: std::ops::Shr<usize, Output = T> + std::ops::BitAnd<T, Output = T> + From<u8> + Copy + PartialEq,
     {
         if self.config.quiet { return Ok(()); }
-        
-        // 1. Generate the table string using the pure utility function.
-        let table_string = bitmap(bitmask, labels, style);
-
-        // 2. Print the generated string.
+        let current_term_width = term_width();
+        let table_string = flag_table(bitmask, labels, style, current_term_width);
         write!(&mut self.writer, "{}", table_string)?;
         self.writer.flush()
     }
@@ -351,8 +381,6 @@ impl Stderr {
     }
 
     /// Creates a builder for a flexible confirmation prompt.
-    ///
-    /// This allows for chaining options like boxing the prompt.
     pub fn confirm_builder<'a>(&'a mut self, prompt: &'a str) -> ConfirmBuilder<'a> {
       ConfirmBuilder::new(self, prompt)
     }
@@ -415,7 +443,7 @@ impl<'a> ConfirmBuilder<'a> {
         }
 
         loop {
-  
+
           if let Some(color) = self.prompt_color {
               // If yes, use it.
               self.stderr.set_bold_fg(color)?;
@@ -428,7 +456,7 @@ impl<'a> ConfirmBuilder<'a> {
           } else {
               write!(&mut self.stderr.writer, "{} [y/n/q] > ", self.prompt)?;
           }
-          
+
           self.stderr.writer.reset()?;
           self.stderr.writer.flush()?;
 

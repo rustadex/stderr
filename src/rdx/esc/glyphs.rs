@@ -1,5 +1,5 @@
-// esc/glyphs_strum.rs
-// note enum != strum 
+//! esc/glyphs_strum.rs
+//! note enum != strum
 //! A curated collection of Unicode (non-emoji) glyphs for use in terminal output.
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, Display, EnumIter};
@@ -56,7 +56,7 @@ pub enum Glyph {
 
     // --- Actions ---
     #[strum(to_string = "\u{238C}")] Undo,
-    #[strum(to_string = "\u{27F2}")] Recover, // 
+    #[strum(to_string = "\u{27F2}")] Recover, //
     #[strum(to_string = "\u{27F3}")] RedoClosed,
 
     // --- Time & Date ---
@@ -151,7 +151,7 @@ pub fn debug_glyphs_string() -> String {
         for glyph in row {
             let name: &str = glyph.as_ref();
             let code = format!("{:X}", glyph.to_string().chars().next().unwrap() as u32);
-            
+
             // Use `format_args!` and `push_str` for efficient string building
             output.push_str(&format!("{} {:<15} U+{: <8}", glyph, name, code));
         }

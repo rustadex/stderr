@@ -5,7 +5,8 @@ use stderr::{
     Color as ESC,
     BorderStyle,
     VERSION,
-    bitmap,
+    flag_table,
+    term_width
 };
 use std::io::Result; // Keep this for main's return type
 
@@ -23,7 +24,7 @@ fn main() -> Result<()> {
     log.okay("This indicates a successful operation.");
     log.warn("This is a warning. Something might be off.");
     log.error("This is an error. Something went wrong.");
-    
+
     log.debug("This is a debug message. (Visible with DEBUG_MODE=1)");
     log.trace("This is a trace message. (Visible with TRACE_MODE=1)");
     log.magic("This is a magic/silly message. (Visible with SILLY_MODE=1)");
@@ -51,14 +52,16 @@ fn main() -> Result<()> {
         "READ", "WRITE", "EXEC", "", "DIR", "FILE", "", "",
         "SETUID", "SETGID", "STICKY", "", "BACKUP", "", "", "IMMUTABLE",
     ];
-    let table_string = bitmap(flags, labels, BorderStyle::Light);
+
+    let current_term_width = term_width();
+    let table_string = flag_table(flags, labels, BorderStyle::Light, current_term_width);
     println!("{}", table_string);
     println!();
 
     // --- Interactive Confirmation ---
     log.banner("Interactive Prompt", '*')?;
     let prompt_text = "This is a critical action that requires confirmation.\nAll unsaved data will be lost.";
-    
+
     // `confirm_builder().ask()` returns a Result, so we use `match`.
     match log.confirm_builder(prompt_text).boxed(true).style(BorderStyle::Heavy).prompt_color(ESC::ORANGE).ask() {
         Ok(Some(true)) => log.okay("User confirmed the action."),

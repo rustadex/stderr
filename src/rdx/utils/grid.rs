@@ -1,16 +1,12 @@
-use crate::stderr_impl::Stderr; // We need this to get a writer
-use termcolor::{self, ColorSpec, WriteColor};
-use std::io::{self, Write};
+//! src/lib/utils/grid.rs
 
+use std::io;
+use termcolor::ColorSpec; // Ensure WriteColor is in scope for the methods
+use crate::stderr::Stderr; // Adjust the path to your Stderr struct
 
 pub fn print_color_grid(logger: &mut Stderr, cols: usize) -> io::Result<()> {
-    let writer = &mut logger.writer; // Get a mutable reference to the writer
-
     for i in 0..256 {
-        // Create a color spec for the background
-        let mut bg_spec = ColorSpec::new();
-        bg_spec.set_bg(Some(termcolor::Color::Ansi256(i as u8)));
-        
+
         // Determine the best foreground color (black or white) for contrast
         let fg_color = if (16..232).contains(&i) {
             // For the main color cube, simple brightness check
@@ -24,28 +20,38 @@ pub fn print_color_grid(logger: &mut Stderr, cols: usize) -> io::Result<()> {
             }
         } else if i < 16 {
             // For the first 16 colors, it's a mix
-             if i == 0 || i == 8 { termcolor::Color::White } else { termcolor::Color::Black }
+            if i == 0 || i == 8 {
+                termcolor::Color::White
+            } else {
+                termcolor::Color::Black
+            }
         } else {
             // Grayscale ramp
-            if i > 243 { termcolor::Color::Black } else { termcolor::Color::White }
+            if i > 243 {
+                termcolor::Color::Black
+            } else {
+                termcolor::Color::White
+            }
         };
 
+        // Create the full color specification for this cell
         let mut spec = ColorSpec::new();
         spec.set_bg(Some(termcolor::Color::Ansi256(i as u8)));
         spec.set_fg(Some(fg_color));
 
-        writer.set_color(&spec)?;
-        // Print the color number, padded to fit nicely.
-        write!(writer, " {:<3} ", i)?;
+        logger.set_color(&spec)?;
+        logger.write(&format!(" {:<3} .", i))?;
+        logger.reset()?;
 
-        // Reset and add a space or a newline
-        writer.reset()?;
         if (i + 1) % cols == 0 {
-            writeln!(writer)?;
+            logger.newline()?;
         } else {
-            write!(writer, " ")?;
+            logger.write("")?;
         }
     }
-    writeln!(writer)?; // Ensure we end with a newline
+
+    // Ensure we always end with a final newline for clean terminal output
+    logger.newline()?;
+
     Ok(())
 }
