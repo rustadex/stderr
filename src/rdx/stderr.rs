@@ -122,7 +122,7 @@ impl Stderr {
     }
 
     /// Creates a new logger with a specific, user-provided configuration.
-    pub fn with_config(self, config: StderrConfig) -> Self {
+    pub fn with_config(config: StderrConfig) -> Self {
       Self {
         config,
         writer: StandardStream::stderr(ColorChoice::Auto),

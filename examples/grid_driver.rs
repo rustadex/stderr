@@ -15,7 +15,7 @@ fn main() -> io::Result<()> {
     );
 
 
-    let mut logger = Stderr::new().with_config(Config::default());
+    let mut logger = Stderr::with_config(Config::default());
 
     print_color_grid(&mut logger, 6)?;
 

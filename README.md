@@ -30,10 +30,11 @@ use stderr::{Stderr, StderrConfig}; // import StderrConfig or use default
 
 fn main() {
     let config = StderrConfig {
-        quiet: true,
-        debug: false,
-        trace: false,
-        silly: false,
+        quiet: true, // when true silences all output
+        debug: false, // when true enables .debug() output
+        trace: false, // when true enables .trace() output
+        silly: false, // when true enables .magic() output
+        dev: false, // when true enables .devlog() output
     };
 
     let mut stderr = Stderr::with_config(config); //can also just call it logger
@@ -47,7 +48,7 @@ use stderr::Stderr;
 
 fn main() {
     let mut logger = Stderr::new();
-    logger.info("This is so clean!").unwrap();
+    logger.info("This is so clean!");
 }
 ```
 
@@ -95,7 +96,7 @@ if stderr.confirm_builder(prompt)
       .ask()?
       .unwrap_or(false)
 {
-    stderr.warn("Erasing all data...")?;
+    stderr.warn("Erasing all data...");
 }
 ```
 
