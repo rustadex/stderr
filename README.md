@@ -1,6 +1,6 @@
 # Rustadex Stderr (`rdx-stderr`)
 
-Internally uses `stderr`
+
 An opinionated, ergonomic library for building beautiful and informative
 command-line interfaces in Rust.
 
@@ -16,7 +16,7 @@ years of handcrafted Bash scripts.
   <img src="https://raw.githubusercontent.com/rustadex/stderr/main/.github/assets/pretty.png" alt="A demo of the rdx-stderr logger in action" width="600">
 </p>
 
-
+> Internally referenced as `stderr`
 
 ## Using Stderr
 
