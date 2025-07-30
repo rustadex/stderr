@@ -230,10 +230,10 @@ impl Stderr {
 		let _ = self.print(msg);
 	}
 
-    pub fn fatal(&mut self, msg: &str) -> ! {
-        let _ = self.error(msg);
-        std::process::exit(1);
-    }
+  pub fn fatal(&mut self, msg: &str) -> ! {
+      let _ = self.error(msg);
+      std::process::exit(1);
+  }
 
 
 	/// Print an error message (always displayed).
@@ -279,7 +279,7 @@ impl Stderr {
 	/// Print a trace message (only shown when trace mode is enabled).
 	pub fn trace(&mut self, msg: &str) {
 		if !self.config.trace { return; }
-		let _ = self.print_with_prefix(ESC::CYAN, ART::Dots, msg);
+		let _ = self.print_with_prefix(ESC::GREY, ART::Dots, msg);
 	}
 
 	/// Print a silly/magic message (only shown when silly mode is enabled).

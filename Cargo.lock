@@ -71,7 +71,7 @@ dependencies = [
 
 [[package]]
 name = "rdx-stderr"
-version = "0.4.1"
+version = "0.4.2"
 dependencies = [
  "function_name",
  "strum",

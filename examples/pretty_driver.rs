@@ -19,15 +19,16 @@ fn main() -> Result<()> {
 
     // --- "Me Macro" Demonstration ---
     // These methods do NOT return a Result in your final code, so they have NO `?` or `.unwrap()`.
-    log.info("This is an informational message.");
-    log.note("This is a note, for something to pay attention to.");
-    log.okay("This indicates a successful operation.");
-    log.warn("This is a warning. Something might be off.");
-    log.error("This is an error. Something went wrong.");
 
-    log.debug("This is a debug message. (Visible with DEBUG_MODE=1)");
-    log.trace("This is a trace message. (Visible with TRACE_MODE=1)");
-    log.magic("This is a magic/silly message. (Visible with SILLY_MODE=1)");
+    log.devlog("This is a dev message. (Visible with DEV_MODE=0)");
+    log.error("This is an error. Something went wrong.");
+    log.warn("This is a warning. Something might be off.");
+    log.info("This is an informational message.");
+    //log.note("This is a note, for something to pay attention to.");
+    log.okay("This indicates a successful operation.");
+    log.magic("This is a magic/silly message. (Visible with SILLY_MODE=0)");
+    log.debug("This is a debug message. (Visible with DEBUG_MODE=0)");
+    log.trace("This is a trace message. (Visible with TRACE_MODE=0)");
     println!();
 
     // --- Boxed Message Demonstration ---

@@ -1,32 +1,26 @@
+# Rustadex Stderr (`rdx-stderr`)
+
+Internally uses `stderr`
+An opinionated, ergonomic library for building beautiful and informative
+command-line interfaces in Rust.
+
+This crate provides the `Stderr` logger, a powerful tool inspired by
+years of handcrafted Bash scripts.
+
+[![Crates.io Version](https://img.shields.io/crates/v/rdx-stderr.svg)](https://crates.io/crates/rdx-stderr)
+[![License: MIT OR Apache-2.0](https://img.shields.io/crates/l/rdx-stderr.svg)](https://github.com/rustadex/stderr/blob/main/LICENSE-MIT)
+[![MSRV](https://img.shields.io/badge/msrv-1.70.0-blue.svg)](https://blog.rust-lang.org/2023/06/01/Rust-1.70.0.html)
 
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rustadex/stderr/main/.github/assets/pretty.png" alt="A demo of the rdx-stderr logger in action" width="600">
+</p>
 
 
-
-## Tree
-
-```bash
-├── Cargo.toml
-└── src
-    ├── lib.rs          <-- The Public API definition
-    └── lib
-        ├── esc.rs      <-- The `esc` module root
-        ├── esc
-        │   ├── color.rs
-        │   ├── glyphs.rs
-        │   └── style.rs
-        ├── utils       <-- The `esc` module root
-        │   ├── grid.rs
-        │   └── flag.rs
-        └── stderr.rs   <-- The `stderr` module implementation
-        └── utils.rs
-```
 
 ## Using Stderr
 
 ```rust
-
-
 
 use stderr::{Stderr, StderrConfig}; // import StderrConfig or use default
 
@@ -101,19 +95,30 @@ if stderr.confirm_builder(prompt)
 }
 ```
 
+## Tree
+
+```bash
+├── Cargo.toml
+└── src
+    ├── lib.rs          <-- The Public API definition
+    └── lib
+        ├── esc.rs      <-- The `esc` module root
+        ├── esc
+        │   ├── color.rs
+        │   ├── glyphs.rs
+        │   └── style.rs
+        ├── utils       <-- The `esc` module root
+        │   ├── grid.rs
+        │   └── flag.rs
+        └── stderr.rs   <-- The `stderr` module implementation
+        └── utils.rs
+```
 
 ## License
 
-This project is **dual-licensed**:
+This project is licensed under either of:
 
-- **AGPLv3** — Free for personal, academic, or non-commercial use.
-- **Commercial license** — Required for any commercial, enterprise, or revenue-generating use.
+*   **Apache License, Version 2.0** ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+*   **MIT license** ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
-Each package in the Rustadex is individually licensed under the GNU AGPLv3.
-
-Use of the entire Codex, any bundled subset, or derivative works for commercial, enterprise, or business development purposes requires a commercial license. This includes usage in internal tools, client-facing products, hosted services, or revenue-generating projects.
-
-We're committed to supporting individual developers, students, and the open-source community — the AGPLv3 lets you use and modify freely. If you're a company or startup, please do the right thing and reach out for licensing.
-
-
-To inquire about commercial licensing, contact [qode(no-botz)ninjax[at]gmail.com].
+at your option.

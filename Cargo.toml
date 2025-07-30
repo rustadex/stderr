@@ -1,12 +1,12 @@
 
 [package]
-name = "rdx-stderr" # Needs to be a unique name on crates.io!
-version = "0.4.1"
+name = "rdx-stderr" #
+version = "0.4.2"
 edition = "2024"
 authors = ["qodeninja <1043235+qodeninja@users.noreply.github.com>"]
 description = "The Rustadex Stderr Package. An opinionated, ergonomic library for pretty-okay CLI terminal output, made of sticks bubble gum and vintage bash scripts."
-license = "MIT" # Or "Apache-2.0" - choose an open-source license.
-repository = "https://github.com/rustadex/stderr" # Link to its future GitHub repo
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/rustadex/stderr"
 readme = "README.md"
 keywords = ["rdx", "rustadex", "logger", "color", "printer"]
 categories = ["command-line-interface"]
@@ -17,7 +17,7 @@ path = "src/lib.rs"
 
 [dependencies]
 termcolor = "1.4"
-function_name = "0.3" #tracer
+function_name = "0.3"
 terminal_size = "0.3"
 strum = "0.26"
 strum_macros = "0.26"
