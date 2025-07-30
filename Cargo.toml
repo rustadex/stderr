@@ -8,7 +8,7 @@ description = "The Rustadex Stderr Package. An opinionated, ergonomic library fo
 license = "MIT" # Or "Apache-2.0" - choose an open-source license.
 repository = "https://github.com/rustadex/stderr" # Link to its future GitHub repo
 readme = "README.md"
-keywords = ["rdx", "rustadex", "ninja", "qode", "cli", "terminal", "logger", "color", "ui"]
+keywords = ["rdx", "rustadex", "logger", "color", "printer"]
 categories = ["command-line-interface"]
 
 [lib]
