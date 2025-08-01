@@ -1,7 +1,7 @@
 
 [package]
 name = "rdx-stderr" #
-version = "0.4.2"
+version = "0.5.0"
 edition = "2024"
 authors = ["qodeninja <1043235+qodeninja@users.noreply.github.com>"]
 description = "The Rustadex Stderr Package. An opinionated, ergonomic library for pretty-okay CLI terminal output, made of sticks bubble gum and vintage bash scripts."
@@ -21,3 +21,4 @@ function_name = "0.3"
 terminal_size = "0.3"
 strum = "0.26"
 strum_macros = "0.26"
+once_cell = "1.18"

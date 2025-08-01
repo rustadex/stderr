@@ -1,4 +1,4 @@
-// src/lib/utils.rs
+//! src/lib/utils.rs
 
 //! # Utility Functions (`utils`)
 //!
@@ -6,11 +6,18 @@
 //! `rdx-stderr` crate.
 
 
-#[path = "utils/flag.rs"]
-pub mod flag;
+  #[path = "utils/helpers.rs"]
+  pub mod helpers;
 
-#[path = "utils/grid.rs"]
-pub mod grid;
+
+  #[path = "utils/flag.rs"]
+  pub mod flag;
+
+  #[path = "utils/grid.rs"]
+  pub mod grid;
+
+
+
 
 // #[path = "utils/trace.rs"]
 // pub mod trace;

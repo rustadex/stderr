@@ -1,7 +1,7 @@
 //! src/lib/meta.rs
 
 
-pub const STDERR_VERSION: &str = "0.4.2";
+pub const STDERR_VERSION: &str = "0.5.0";
 
 const HELP_TEXT: &str = "
 stderr - A Rust library for rich terminal output.

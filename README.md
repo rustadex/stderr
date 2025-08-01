@@ -116,7 +116,7 @@ if stderr.confirm_builder(prompt)
         │   ├── color.rs
         │   ├── glyphs.rs
         │   └── style.rs
-        ├── utils       <-- The `esc` module root
+        ├── utils       <-- The `utils` module root
         │   ├── grid.rs
         │   └── flag.rs
         └── stderr.rs   <-- The `stderr` module implementation

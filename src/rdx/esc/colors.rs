@@ -41,6 +41,7 @@ impl Color {
   pub const GREY3: TermColor = TermColor::Ansi256(237);
   pub const MAGENTA: TermColor = TermColor::Ansi256(13);
   pub const MAGENTA2: TermColor = TermColor::Ansi256(198);
+  pub const PINK: TermColor = TermColor::Ansi256(211);
 }
 
 
