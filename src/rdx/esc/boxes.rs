@@ -7,14 +7,12 @@
       Light,
       Heavy,
       Double,
-      // We could even add Rounded later!
-      // Rounded,
+
   }
 
-  // This can be a private struct inside stderr.rs
 
   pub struct BoxChars {
-      // Add `pub` before every field to make them accessible.
+
       pub top_left: &'static str,
       pub top_right: &'static str,
       pub bottom_left: &'static str,
@@ -29,8 +27,7 @@
   }
 
 
-  // Now, we define the character sets for each style.
-// In src/lib/esc/boxes.rs
+
 
 impl BoxChars {
     /// Creates a character set from a given `BorderStyle`.

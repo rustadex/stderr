@@ -3,10 +3,9 @@
 
 //! # Terminal Color Codes
 //!
-//! Functions and types for manipulating text color in the terminal.
+//! FFunctions and types for manipulating text color in the terminal.
 
-/// A vibrant, 24-bit color.
-///
+
 use termcolor::Color as TermColor;
 
 
@@ -29,7 +28,7 @@ impl Color {
   pub const ORANGE2: TermColor = TermColor::Ansi256(221);
   pub const GREEN: TermColor = TermColor::Ansi256(10);
   pub const GREEN2: TermColor = TermColor::Ansi256(156);
-  pub const CYAN: TermColor = TermColor::Cyan;
+  pub const CYAN: TermColor = TermColor::Ansi256(51);
   pub const PURPLE: TermColor = TermColor::Ansi256(213);
   pub const PURPLE2: TermColor = TermColor::Ansi256(141);
   pub const BLACK0: TermColor = TermColor::Ansi256(0);
@@ -46,11 +45,11 @@ impl Color {
 
 
 
-pub struct TrueColor {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-}
+// pub struct TrueColor {
+//     pub r: u8,
+//     pub g: u8,
+//     pub b: u8,
+// }
 
 //   let mut writer = StandardStream::stdout(ColorChoice::Auto);
 
