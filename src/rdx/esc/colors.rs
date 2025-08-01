@@ -23,7 +23,7 @@ impl Color {
   pub const RED: TermColor = TermColor::Ansi256(1);
   pub const BLUE: TermColor  = TermColor::Cyan;
   pub const BLUE2: TermColor = TermColor::Ansi256(39);
-  pub const YELLOW: TermColor = TermColor::Ansi256(9);
+  pub const YELLOW: TermColor = TermColor::Ansi256(11);
   pub const YELLOW2: TermColor = TermColor::Ansi256(226);
   pub const ORANGE: TermColor = TermColor::Ansi256(214);
   pub const ORANGE2: TermColor = TermColor::Ansi256(221);

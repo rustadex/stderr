@@ -189,34 +189,42 @@ impl Stderr {
         self
     }
 
+    pub fn set_label(&mut self, label: impl Into<String>) {
+        self.label = Some(label.into());
+    }
+
+    pub fn clear_label(&mut self) {
+        self.label = None;
+    }
+
     /// Overrides the quiet setting.
-    pub fn set_quiet(mut self, quiet: bool) -> Self {
+    pub fn set_quiet(&mut self, quiet: bool)  {
       self.config.quiet = quiet;
-      self
+      
     }
 
     /// Overrides the debug setting.
-    pub fn set_debug(mut self, debug: bool) -> Self {
+    pub fn set_debug(&mut self, debug: bool) {
       self.config.debug = debug;
-      self
+      
     }
 
     /// Overrides the trace setting.
-    pub fn set_trace(mut self, trace: bool) -> Self {
+    pub fn set_trace(mut self, trace: bool) {
       self.config.trace = trace;
-      self
+      
     }
 
     /// Overrides the silly setting.
-    pub fn set_silly(mut self, silly: bool) -> Self {
+    pub fn set_silly(&mut self, silly: bool) {
       self.config.silly = silly;
-      self
+      
     }
 
     /// Overrides the silly setting.
-    pub fn set_dev(mut self, dev: bool) -> Self {
+    pub fn set_dev(&mut self, dev: bool)  {
       self.config.dev = dev;
-      self
+      
     }
 
 
@@ -412,8 +420,8 @@ impl Stderr {
         self.set_fg(color)?;
 
         let formatted_prefix = match &self.label {
-            Some(label) => format!("[{}][{}]", label, prefix),
-            None => format!("[{}]", prefix),
+            Some(label) => format!("[{}]{}", label, prefix),
+            None => format!("{}", prefix),
         };
 
         writeln!(&mut self.writer, "{} {:#?}", formatted_prefix, value)?;

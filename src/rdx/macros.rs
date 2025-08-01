@@ -41,6 +41,13 @@ macro_rules! qtrace {
 }
 
 #[macro_export]
+macro_rules! qokay {
+    ($msg:expr) => {
+        $crate::logger.log($crate::LogLevel::Okay, $msg)
+    };
+}
+
+#[macro_export]
 macro_rules! qpretty {
     ($prefix:expr, $value:expr) => {
         $crate::logger.raw().print_with_prefix_debug(

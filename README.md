@@ -1,4 +1,4 @@
-# Rustadex Stderr (`rdx-stderr`)
+# Rustadex Stderr (`rdx-stderr`) v.0.5.0
 
 
 An opinionated, ergonomic library for building beautiful and informative
@@ -22,80 +22,121 @@ years of handcrafted Bash scripts.
 
 > Internally referenced as `stderr`
 
-## Using Stderr
+
+---
+
+## 🚀 What's New (v0.5)
+
+* **Global/static logger:**  Just `use stderr::logger;` — instant everywhere logging
+* **Macro logging:**  `qinfo!`, `qwarn!`, `qerror!`, `qpretty!` — log anything, anywhere, styled
+* **Pretty debug/inspect:**  `.inspect().info(&obj)`, `.warn_debug(&my_struct)` for Rust-native pretty dumps
+* **Custom glyphs & colors:**  Unicode and ANSI at your command
+* **Boxed/grid prompts:**  `confirm_builder` with styles, borders, heavy boxes
+* **Composable config:**  Toggle `quiet`, `trace`, `debug`, etc., at runtime
+* **Bash-inspired, CLI-native:**  The fastest way to make terminal output *sing*
+* **Trait-based, extendable:**  Easy to wire in your own glyph sets or color themes
+
+---
+
+## ⚡ Philosophy: Fast, Expressive, Bash DNA
+
+* Terminal output should be beautiful and actionable, not just noise
+* Defaults are high signal, but you can theme, override, and hack anything
+* Built to match (and outclass) custom Bash stderr libs
+
+---
+
+## ✦ Features
+
+* 🌈 Drop-in `Stderr` logger or global `logger`
+* 🔥 Macro suite: `qinfo!`, `qwarn!`, `qerror!`, `qdebug!`, `qpretty!`
+* 🧩 Rich debug & inspect: struct pretty-print, multi-level
+* 🎨 Color & Unicode glyphs: built-in sets, composable
+* 🔧 Builder-style config, runtime toggles, chained setters
+* 📦 Boxed, gridded, and styled prompts (even ASCII art)
+* 🌀 Ergonomic API — str, Display, Debug, all accepted
+* 🚦 Bash/CLI workflow: just log, pretty-print, confirm
+
+---
+
+## 🚀 Quickstart
 
 ```rust
-
-use stderr::{Stderr, StderrConfig}; // import StderrConfig or use default
-
-fn main() {
-    let config = StderrConfig {
-        quiet: true,
-        debug: false,
-        trace: false,
-        silly: false,
-    };
-
-    let mut stderr = Stderr::with_config(config); //can also just call it logger
-
-    stderr.info("This will not be printed.").unwrap();
-}
-
-//or simple
-
 use stderr::Stderr;
 
 fn main() {
-    let mut logger = Stderr::new();
-    logger.info("This is so clean!").unwrap();
+    let mut log = Stderr::new();
+    log.info("Launch successful!");
 }
 ```
 
+### With Global Logger
 
-## Use Color, Style, Glyphs
 ```rust
-// The `use` paths are simple and clean, hiding the `pkgs` directory.
-use stderr::{Stderr, Color, Style, Glyph};
+use stderr::logger;
 
-//using unicode glyphs and color escapes
 fn main() {
-    let mut stderr = Stderr::new();
-    let _red = Color::RED;
-    let _pawn = Glyph::PAWN;
-    // ...
-}
-
-//using stderr logger
-fn main() {
-    let mut stderr = Stderr::new();
-    stderr.okay("Module structure is clear and API is flattened!").unwrap();
-    println!("Using a glyph: {}", Glyph::PAWN);
-
+    logger.info("This hits everywhere");
+    logger.warn("Watch out");
 }
 ```
-## Confirm
+
+---
+
+## 🧩 Macro Logging
 
 ```rust
-let mut stderr = Stderr::new();
-if stderr.confirm("Proceed?")?.unwrap_or(false) {
-    // ...
+qinfo!("Quant mode engaged");
+qwarn!("Something's spicy");
+qerror!(my_struct); // Auto pretty-prints if Debug
+qpretty!("⚡", &payload); // Boxed, multiline pretty-dump
+```
+
+
+---
+
+## 🔍 Debug, Inspect, Pretty Print
+
+```rust
+#[derive(Debug)]
+struct State { x: u8, tag: String }
+
+let state = State { x: 42, tag: "active".into() };
+
+// Method: pretty debug
+logger.info_debug(&state); // Multiline, formatted
+logger.inspect().warn(&state); // Via inspect view
+```
+
+---
+
+## 🎨 Color, Glyphs, Style
+
+```rust
+use stderr::{Color, Glyph, Style};
+
+let mut log = Stderr::new();
+log.okay("All systems go");
+println!("Using a glyph: {}", Glyph::PAWN);
+```
+
+---
+
+## ✅ Prompts & Boxed Confirm
+
+```rust
+let mut log = Stderr::new();
+if log.confirm("Engage quantum mode?")?.unwrap_or(false) {
+    log.okay("Do it.");
 }
 
-```
-## Boxed Confirm
-
-```rust
-let mut stderr = Stderr::new();
-let prompt = "This is a critical action.\nAll data will be erased.\nAre you absolutely sure?";
-
-// Use the builder to create a much more impactful prompt.
-if stderr.confirm_builder(prompt)
+let critical = "ERASE DISK?\nNo undo.";
+if log.confirm_builder(critical)
       .boxed(true)
-      .style(BorderStyle::Heavy) // Use a heavy border for emphasis
+      .style(BorderStyle::Heavy)
       .ask()?
-      .unwrap_or(false)
-{
-    stderr.warn("Erasing all data...")?;
+      .unwrap_or(false) {
+    log.warn("This is irreversible");
 }
 ```
 
