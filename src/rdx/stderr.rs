@@ -11,7 +11,5 @@
   pub mod static_logger;
 
 
-
   pub use stderr::{Stderr, StderrConfig, OptionFlag, ESC, ART };
-
-  pub use static_logger::{ logger, StaticLogger };
+  pub use static_logger::{ LOGGER as logger, StaticLogger };

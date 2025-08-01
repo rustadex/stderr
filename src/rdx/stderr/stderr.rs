@@ -30,7 +30,7 @@
 //! }
 //! ```
 
-use std::fmt::Display;
+use std::fmt::{ Display, Debug };
 use std::io::{self, IsTerminal, Write};
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 use crate::esc::boxes::{BorderStyle, BoxChars};
@@ -38,9 +38,6 @@ use crate::utils::helpers::{ repeat_char, term_width, env };
 use crate::utils::flag::flag_table;
 pub use crate::esc::colors::{Color as ESC};
 pub use crate::esc::glyphs::{Glyph as ART};
-
-
-pub use super::stderr_debug::{ DebugPrinter, LogLevel };
 
 
 
@@ -173,7 +170,7 @@ impl Stderr {
         config: StderrConfig::from_env(), // Smart default
         writer: StandardStream::stderr(ColorChoice::Auto),
         width: term_width(),
-        label: Option<String>,
+        label: None,
       }
     }
 
@@ -182,7 +179,7 @@ impl Stderr {
       Self {
         config,
         writer: StandardStream::stderr(ColorChoice::Auto),
-        label: Option<String>,
+        label: None,
         width: term_width(),
       }
     }
