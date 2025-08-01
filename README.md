@@ -148,20 +148,31 @@ if log.confirm_builder(critical)
 ## Tree
 
 ```bash
-├── Cargo.toml
-└── src
-    ├── lib.rs          <-- The Public API definition
-    └── lib
-        ├── esc.rs      <-- The `esc` module root
-        ├── esc
-        │   ├── color.rs
-        │   ├── glyphs.rs
-        │   └── style.rs
-        ├── utils       <-- The `utils` module root
-        │   ├── grid.rs
-        │   └── flag.rs
-        └── stderr.rs   <-- The `stderr` module implementation
-        └── utils.rs
+   │
+   ├── src
+   ├── lib.rs
+   └── rdx
+       ├── esc
+       │   ├── boxes.rs
+       │   ├── colors.rs
+       │   ├── glyphs_enum.rs
+       │   ├── glyphs.rs
+       │   └── style.rs
+       ├── esc.rs
+       ├── macros.rs
+       ├── meta.rs
+       ├── stderr
+       │   ├── static_logger.rs
+       │   └── stderr.rs
+       ├── stderr.rs
+       ├── utils.rs
+       └── utils
+           ├── flag.rs
+           ├── grid.rs
+           ├── helpers.rs
+           └── trace.rs
+        
+
 ```
 
 ## License
