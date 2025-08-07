@@ -28,23 +28,16 @@ pub mod meta;
 // --- The Curated Public API ---
 
 pub use stderr::{Stderr, StderrConfig, OptionFlag, logger, StaticLogger};
-
-
-//pub use logger::{logger, StaticLogger};
-
 pub use esc::colors::Color;
 pub use esc::glyphs::{Glyph, debug_glyphs_string};
 pub use esc::style::Style;
-
 pub use esc::boxes::{BorderStyle, BoxChars};
 
-//pub use utils::trace::TraceLogger;
+//pub use utils::trace::TraceLogger; #WIP
 
 pub use utils::helpers::{ readline, repeat_char, term_width, env };
-
 pub use utils::flag::flag_table;
 pub use utils::grid::print_color_grid;
-
 pub use meta::{STDERR_VERSION as VERSION, help_string};
 
 // --- ALIASES ---

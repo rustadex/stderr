@@ -1,7 +1,6 @@
 //! src/lib/std.rs
 
 //! # Stderr Functions (`stderr`)
-//!
 
 
   #[path = "stderr/stderr.rs"]

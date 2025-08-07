@@ -24,8 +24,6 @@ impl StaticLogger {
         LOGGER_.lock().unwrap().okay(msg);
     }
 
-
-    // Optional: expose underlying Stderr for advanced use
     pub fn raw(&self) -> MutexGuard<'static, Stderr> {
         LOGGER_.lock().unwrap()
     }
