@@ -4,7 +4,7 @@ use std::fmt::{Display, Debug};
 use std::io::{self, Write};
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 use crate::esc::colors::Color as ESC;
-use crate::esc::glyphs::Glyph as ART;
+
 use crate::utils::helpers::{term_width, env};
 
 /// Logging levels for the core logger
@@ -133,13 +133,13 @@ pub struct GlyphSet {
 impl Default for GlyphSet {
     fn default() -> Self {
         Self {
-            info: ART::Lambda.to_string(),
-            warn: ART::Delta.to_string(), 
-            error: ART::Fail.to_string(),
-            okay: ART::Pass.to_string(),
-            trace: ART::Dots.to_string(),
-            debug: ART::Boto.to_string(),
-            magic: ART::Bolt.to_string(),
+            info: "\u{03BB}",      // λ
+            warn: "\u{25B3}",      // △
+            error: "\u{2715}",     // ✕
+            okay: "\u{2713}",      // ✓
+            trace: "\u{2026}",     // …
+            debug: "\u{232C}",     // ⌬
+            magic: "\u{21AF}",     // ↯
         }
     }
 }
@@ -368,7 +368,7 @@ impl Stderr {
     }
 
     pub fn note(&mut self, msg: &str) {
-        let _ = self.print_with_prefix(ESC::BLUE, ART::Right, msg);
+        let _ = self.print_with_prefix(ESC::BLUE, "\u{2192}", msg); // →
     }
 
     pub fn debug(&mut self, msg: &str) {
@@ -393,11 +393,11 @@ impl Stderr {
 
     pub fn silly(&mut self, msg: &str) {
         if !self.config.silly { return; }
-        let _ = self.print_with_prefix(ESC::MAGENTA, ART::Phi, msg);
+        let _ = self.print_with_prefix(ESC::MAGENTA, "\u{03C6}", msg); // φ
     }
 
     /// Get access to the debug printer interface
-    pub fn inspect(&mut self) -> DebugPrinter {
+    pub fn inspect(&mut self) -> DebugPrinter<'_> {
         DebugPrinter { inner: self }
     }
 
@@ -407,11 +407,11 @@ impl Stderr {
             LogLevel::Warn => (ESC::ORANGE, self.glyphs.warn),
             LogLevel::Error => (ESC::RED, self.glyphs.error),
             LogLevel::Info => (ESC::BLUE, self.glyphs.info),
-            LogLevel::Note => (ESC::BLUE, ART::Right.to_string()),
+            LogLevel::Note => (ESC::BLUE, "\u{2192}"), // →
             LogLevel::Debug => (ESC::CYAN, self.glyphs.debug),
             LogLevel::Trace => (ESC::GREY, self.glyphs.trace),
             LogLevel::Magic => (ESC::PURPLE, self.glyphs.magic),
-            LogLevel::Silly => (ESC::MAGENTA, ART::Phi.to_string()),
+            LogLevel::Silly => (ESC::MAGENTA, "\u{03C6}"), // φ
             LogLevel::DevLog => (ESC::MAGENTA, self.glyphs.debug),
         };
 
@@ -455,7 +455,7 @@ impl Stderr {
     }
 
     pub fn note_debug<T: Debug>(&mut self, value: &T) {
-        let _ = self.print_with_prefix_debug(ESC::BLUE, ART::Right, value);
+        let _ = self.print_with_prefix_debug(ESC::BLUE, "\u{2192}", value); // →
     }
 
     pub fn debug_debug<T: Debug>(&mut self, value: &T) {
@@ -480,6 +480,6 @@ impl Stderr {
 
     pub fn silly_debug<T: Debug>(&mut self, value: &T) {
         if !self.config.silly { return; }
-        let _ = self.print_with_prefix_debug(ESC::MAGENTA, ART::Phi, value);
+        let _ = self.print_with_prefix_debug(ESC::MAGENTA, "\u{03C6}", value); // φ
     }
 }

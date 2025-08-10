@@ -1,28 +1,28 @@
 //! Stderr module - Modular logging with optional features
-//! 
-//! This module provides a feature-gated approach to stderr functionality:
-//! - Core: Basic logging (always available)
-//! - Trace: Hierarchical tracing with function tracking
-//! - Interactive: Prompts, confirmations, user input
-//! - Formatting: Tables, boxes, banners, advanced formatting
 
-// Core functionality (always available)
-pub mod core;
+// Main stderr implementation in the stderr/ subdirectory
+#[path = "stderr/stderr.rs"]
+pub mod stderr;
 
-// Feature-gated modules
+// Feature-gated extension modules in the stderr/ subdirectory
 #[cfg(feature = "trace")]
+#[path = "stderr/trace.rs"]
 pub mod trace;
 
 #[cfg(feature = "interactive")]
+#[path = "stderr/interactive.rs"]
 pub mod interactive;
 
 #[cfg(feature = "formatting")]
+#[path = "stderr/formatting.rs"]
 pub mod formatting;
 
-// Re-export core types
-pub use core::{
-    Stderr, StderrConfig, LogLevel, OptionFlag, GlyphSet
-};
+// Static logger in the stderr/ subdirectory
+#[path = "stderr/static_logger.rs"]
+pub mod static_logger;
+
+// Re-export everything from the main stderr implementation
+pub use stderr::*;
 
 // Feature-gated re-exports
 #[cfg(feature = "trace")]
@@ -34,19 +34,9 @@ pub use interactive::{ConfirmBuilder, InteractiveExt};
 #[cfg(feature = "formatting")]
 pub use formatting::{TableRow, FormattingExt};
 
-// Static logger (always available)
-pub mod static_logger;
+// Static logger
 pub use static_logger::{LOGGER as logger, StaticLogger};
 
-// Convenient type aliases
+// Type aliases
 pub type Logger = Stderr;
 pub type Config = StderrConfig;
-
-// Re-export for macros
-pub use crate::esc::colors::Color;
-pub use crate::esc::glyphs::Glyph;
-
-// Legacy aliases for backward compatibility
-pub use core::{Stderr as StderrImpl};
-pub use crate::esc::colors::Color as ESC;
-pub use crate::esc::glyphs::Glyph as ART;

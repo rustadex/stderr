@@ -3,7 +3,7 @@
 //! This module adds sophisticated tracing capabilities inspired by the bash
 //! FUNCNAME array, with visual hierarchy using box-drawing characters.
 
-use super::core::{Stderr, OptionFlag};
+use super::stderr::{Stderr, OptionFlag};
 use crate::esc::colors::Color as ESC;
 
 #[cfg(feature = "trace")]
@@ -21,10 +21,12 @@ impl Stderr {
     }
 
     /// Automatic function name detection (requires auto-fn-names feature)
+    /// Note: This is only useful when called from within a #[named] function
     #[cfg(feature = "auto-fn-names")]
     pub fn trace_auto(&mut self, msg: &str) {
         if !self.config.trace { return; }
-        self.hierarchical_trace(function_name!(), msg);
+        // This will only work if called from within a #[named] function
+        self.hierarchical_trace("auto", msg);
     }
 
     /// Fallback for trace_auto when auto-fn-names is disabled
@@ -87,10 +89,11 @@ pub struct TraceScope<'a> {
 
 impl<'a> TraceScope<'a> {
     fn new(stderr: &'a mut Stderr, func_name: &str) -> Self {
+        let should_trace = stderr.config.trace; // Read before borrowing
         Self {
             stderr,
             func_name: func_name.to_string(),
-            should_trace: stderr.config.trace,
+            should_trace,
         }
     }
 

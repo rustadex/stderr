@@ -115,7 +115,7 @@ macro_rules! qtrace_scope {
 #[macro_export]
 macro_rules! qtrace_scope_auto {
     () => {
-        let _trace_scope = $crate::logger.raw().trace_scope(function_name!());
+        let _trace_scope = $crate::logger.raw().trace_scope(function_name::function_name!());
     };
 }
 

@@ -1,8 +1,8 @@
 //! Formatting features for stderr - tables, boxes, banners, advanced layouts
 
-use std::io;
-use termcolor::ColorSpec;
-use super::core::{Stderr, OptionFlag};
+use std::io::{self, Write};
+use termcolor::{ColorSpec, WriteColor};
+use super::stderr::{Stderr, OptionFlag};
 use crate::esc::boxes::{BorderStyle, BoxChars};
 use crate::esc::colors::Color as ESC;
 use crate::utils::helpers::{repeat_char, term_width};
@@ -159,7 +159,7 @@ impl Stderr {
         }
         
         // Convert to &[&str] format
-        let table_data: Vec<&[&str]> = all_rows.iter().map(|r| r.as_slice()).collect();
+        let table_data: Vec<&[&str]> = all_rows.iter().map(|r| &r[..]).collect();
         self.simple_table(&table_data)
     }
 

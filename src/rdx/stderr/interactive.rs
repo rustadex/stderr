@@ -1,9 +1,9 @@
 //! Interactive features for stderr - prompts, confirmations, user input
 
 use std::io::{self, IsTerminal, Write};
-use termcolor::Color;
-use super::core::{Stderr, OptionFlag};
-use crate::esc::boxes::{BorderStyle, BoxChars};
+use termcolor::{Color, WriteColor};
+use super::stderr::{Stderr, OptionFlag};
+use crate::esc::boxes::BorderStyle;
 use crate::esc::colors::Color as ESC;
 
 #[cfg(feature = "interactive")]
