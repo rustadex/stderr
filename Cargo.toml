@@ -1,7 +1,6 @@
-
 [package]
-name = "rdx-stderr" #
-version = "0.6.0"
+name = "rdx-stderr"
+version = "0.7.0"
 edition = "2021"
 authors = ["qodeninja <1043235+qodeninja@users.noreply.github.com>"]
 description = "The Rustadex Stderr Package. An opinionated, ergonomic library for pretty-okay CLI terminal output, made of sticks bubble gum and vintage bash scripts."
@@ -15,10 +14,20 @@ categories = ["command-line-interface"]
 name = "stderr"
 path = "src/lib.rs"
 
+[features]
+default = ["trace", "interactive", "formatting", "auto-fn-names"]
+minimal = []
+trace = []
+interactive = []
+formatting = []
+auto-fn-names = ["function_name"]
+
 [dependencies]
 termcolor = "1.4"
-function_name = "0.3"
 terminal_size = "0.3"
 strum = "0.26"
 strum_macros = "0.26"
 once_cell = "1.18"
+
+# Optional dependencies
+function_name = { version = "0.3", optional = true }
