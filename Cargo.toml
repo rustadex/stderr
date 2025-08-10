@@ -1,6 +1,6 @@
 [package]
 name = "rdx-stderr"
-version = "0.7.0"
+version = "0.8.0"
 edition = "2021"
 authors = ["qodeninja <1043235+qodeninja@users.noreply.github.com>"]
 description = "The Rustadex Stderr Package. An opinionated, ergonomic library for pretty-okay CLI terminal output, made of sticks bubble gum and vintage bash scripts."
