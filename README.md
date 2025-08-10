@@ -1,4 +1,4 @@
-# 📖 Rustadex Stderr v0.8.1 (`rdx-stderr`)
+# 📖 Rustadex Stderr v0.8.2 (`rdx-stderr`)
 *An opinionated, ergonomic library for pretty-okay CLI terminal output, made of sticks bubble gum and vintage bash scripts.*
 
 
@@ -41,10 +41,10 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-rdx-stderr = "0.8.1"
+rdx-stderr = "0.8.2"
 
 # Or with specific features:
-rdx-stderr = { version = "0.8.1", features = ["trace", "interactive", "formatting"] }
+rdx-stderr = { version = "0.8.2", features = ["trace", "interactive", "formatting"] }
 ```
 
 ### **Basic Logging**
@@ -168,10 +168,10 @@ fn main() {
 
 ```toml
 # Minimal build - just basic logging
-rdx-stderr = { version = "0.8.1", default-features = false, features = ["minimal"] }
+rdx-stderr = { version = "0.8.2", default-features = false, features = ["minimal"] }
 
 # Full-featured build
-rdx-stderr = { version = "0.8.1", features = ["default"] }
+rdx-stderr = { version = "0.8.2", features = ["default"] }
 ```
 
 ---
@@ -630,6 +630,12 @@ fn main() {
 ---
 
 ## 📊 Table & Data Formatting
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rustadex/stderr/main/.github/assets/tables.png" alt="A demo of the rdx-stderr logger in action" width="600">
+</p>
+
 
 ### Simple Tables
 ```rust
