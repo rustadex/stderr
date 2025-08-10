@@ -1,7 +1,7 @@
 // examples/trace_driver.rs
 // Test driver for the new hierarchical tracing system
 
-use stderr::{Stderr, Color as ESC, GlyphSet, LogLevel};
+use stderr::{Stderr, GlyphSet, LogLevel};
 
 #[cfg(feature = "auto-fn-names")]
 use function_name::named;
@@ -25,6 +25,10 @@ fn main() {
     #[cfg(feature = "auto-fn-names")]
     test_automatic_tracing(&mut log);
     
+    // Test trace scopes
+    test_trace_scope(&mut log);
+    println!();
+    
     // Test context changes
     test_context_changes(&mut log);
     println!();
@@ -35,6 +39,10 @@ fn main() {
 
     // Test labelled traces
     test_labelled_traces(&mut log);
+    
+    test_trace_entry_exit(&mut log);
+    // Test reset functionality
+    test_reset_functionality(&mut log);
     
     log.okay("All tracing tests completed!");
 }
@@ -60,6 +68,7 @@ fn test_manual_tracing(log: &mut Stderr) {
 fn test_automatic_tracing(log: &mut Stderr) {
     log.info("=== Automatic Function Name Tracing ===");
     
+    // This should show "test_automatic_tracing" as the function name
     log.trace_auto("entering function with automatic name detection");
     log.trace_auto("performing some work");
     
@@ -75,6 +84,20 @@ fn test_automatic_tracing(log: &mut Stderr) {
 fn nested_function_auto(log: &mut Stderr) {
     log.trace_auto("this is a nested function");
     log.trace_auto("doing nested work");
+}
+
+fn test_trace_scope(log: &mut Stderr) {
+    log.info("=== Trace Scope Testing ===");
+    
+    {
+        let mut scope = log.trace_scope("test_function");
+        scope.step("performing step 1");
+        scope.step("performing step 2");
+        scope.step_debug("step 3 result", &vec![1, 2, 3]);
+        // Scope automatically logs exit when dropped
+    }
+    
+    log.trace_fn("main", "scope test complete");
 }
 
 fn test_context_changes(log: &mut Stderr) {
@@ -136,17 +159,35 @@ fn test_labelled_traces(log: &mut Stderr) {
     log.trace_sub("Removing temporary files");
 }
 
-// Test the scope guard functionality
-fn test_trace_scope(log: &mut Stderr) {
-    log.info("=== Trace Scope Testing ===");
+fn test_reset_functionality(log: &mut Stderr) {
+    log.info("=== Reset Functionality Testing ===");
     
-    {
-        let mut scope = log.trace_scope("test_function");
-        scope.step("performing step 1");
-        scope.step("performing step 2");
-        scope.step_debug("step 3 result", &vec![1, 2, 3]);
-        // Scope automatically logs exit when dropped
+    // Set up some trace state
+    log.trace_fn("function_a", "first call");
+    log.trace_fn("function_a", "second call - should be continuation");
+    
+    // Check current state
+    if let Some(current_func) = log.current_trace_func() {
+        log.info(&format!("Current trace function: {}", current_func));
     }
     
-    log.trace_fn("main", "scope test complete");
+    // Reset the trace state
+    log.reset_trace_state();
+    log.info("Trace state reset");
+    
+    // This should start a new trace branch
+    log.trace_fn("function_a", "after reset - should be new branch");
+}
+
+// Test the trace entry/exit methods
+fn test_trace_entry_exit(log: &mut Stderr) {
+    log.info("=== Trace Entry/Exit Testing ===");
+    
+    log.trace_enter("my_function");
+    log.trace_fn("my_function", "doing some work");
+    log.trace_exit("my_function");
+    
+    // Test with return value
+    let result = vec!["item1", "item2"];
+    log.trace_exit_with("my_function", &result);
 }
