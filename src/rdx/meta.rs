@@ -1,7 +1,7 @@
 //! src/lib/meta.rs
 
 
-pub const STDERR_VERSION: &str = "0.5.0";
+const STDERR_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 const HELP_TEXT: &str = "
 stderr - A Rust library for rich terminal output.
