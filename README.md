@@ -5,7 +5,7 @@
 [![Crates.io Version](https://img.shields.io/crates/v/rdx-stderr.svg)](https://crates.io/crates/rdx-stderr)
 [![MSRV](https://img.shields.io/badge/msrv-1.70.0-blue.svg)](https://blog.rust-lang.org/2023/06/01/Rust-1.70.0.html)
 [![License: MIT OR Apache-2.0](https://img.shields.io/crates/l/rdx-stderr.svg)](https://github.com/rustadex/stderr/blob/main/LICENSE-MIT)
-[![Status: Production Ready](https://img.shields.io/badge/Status-Production_Ready-brightgreen.svg)]()
+[![Status: PRD Ready](https://img.shields.io/badge/Status-PRD_Ready-brightgreen.svg)]()
 
 
 
@@ -82,10 +82,6 @@ fn main() {
 }
 ```
 
-
-
-
----
 
 
 ---
@@ -694,7 +690,34 @@ fn main() {
 
 
 
+
 ## 🏗️ **Architecture**
+
+```
+src/
+├── lib.rs              # Main library interface
+├── rdx/
+│   ├── stderr.rs       # Core module with feature re-exports
+│   ├── esc/            # Colors, glyphs, styling
+│   │   ├── colors.rs
+│   │   ├── glyphs.rs
+│   │   ├── style.rs
+│   │   └── boxes.rs
+│   ├── utils/          # Utilities and helpers  
+│   │   ├── helpers.rs
+│   │   ├── flag.rs
+│   │   └── grid.rs
+│   ├── stderr/         # Feature implementations
+│   │   ├── stderr.rs   # Core logging
+│   │   ├── trace.rs    # Hierarchical tracing
+│   │   ├── interactive.rs # Prompts & confirmations
+│   │   ├── formatting.rs  # Tables, banners, boxes
+│   │   └── static_logger.rs # Global logger
+│   ├── macros.rs       # Convenience macros
+│   └── meta.rs         # Version and help info
+└── examples/           # Usage demonstrations
+```
+
 
 
 ## 🧪 **Testing & Validation**
