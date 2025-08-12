@@ -1,4 +1,4 @@
-# 📖 Rustadex Stderr v0.8.2 (`rdx-stderr`)
+# 📖 Rustadex Stderr (`rdx-stderr`)
 *An opinionated, ergonomic library for pretty-okay CLI terminal output, made of sticks bubble gum and vintage bash scripts.*
 
 
