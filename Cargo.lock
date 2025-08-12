@@ -77,7 +77,7 @@ dependencies = [
 
 [[package]]
 name = "rdx-stderr"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "function_name",
  "once_cell",
